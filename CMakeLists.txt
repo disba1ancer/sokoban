@@ -8,6 +8,7 @@ project(sokoban
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_EXTENSIONS OFF)
 
 find_package(Threads REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -21,6 +22,7 @@ add_executable(sokoban
     src/glwrp/GLImportedFunction.h
     src/glwrp/ShaderProgramMaker.cpp
     src/glwrp/ShaderProgramMaker.h
+    src/platform/win32.h
     src/sokoban/CloseEvent.cpp
     src/sokoban/CloseEvent.h
     src/sokoban/Game.cpp
@@ -29,6 +31,8 @@ add_executable(sokoban
     src/sokoban/KeyEvent.h
     src/sokoban/LevelLogic.cpp
     src/sokoban/LevelLogic.h
+    src/sokoban/RedrawEvent.cpp
+    src/sokoban/RedrawEvent.h
     src/sokoban/ResizeEvent.cpp
     src/sokoban/ResizeEvent.h
     src/sokoban/shaderProgram.cpp
@@ -56,7 +60,7 @@ add_executable(sokoban
     src/util/vec.cpp
     src/util/vec.h
 )
-target_include_directories(sokoban PRIVATE src)
+target_include_directories(sokoban PRIVATE src/gl src)
 target_link_libraries(sokoban PRIVATE Threads::Threads OpenGL::GL)
 
 install(TARGETS sokoban DESTINATION .)

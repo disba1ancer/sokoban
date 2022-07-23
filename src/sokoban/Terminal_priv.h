@@ -8,15 +8,14 @@
 #ifndef TERMINAL_PRIV_H_
 #define TERMINAL_PRIV_H_
 
-#define WIN32_LEAN_AND_MEAN
-
-#include <windows.h>
+#include <platform/win32.h>
 #include <array>
 #include <vector>
 #include <utility>
 #include <iostream>
 #include <sokoban/Terminal.h>
 #include "sokoban/CloseEvent.h"
+#include "sokoban/RedrawEvent.h"
 #include "sokoban/ResizeEvent.h"
 #include "util/observer1.h"
 #include "sokoban/KeyEvent.h"
@@ -73,56 +72,38 @@ inline LRESULT CALLBACK TerminalPrivate::staticWndProc(HWND hWnd, UINT message,
 }
 
 inline LRESULT TerminalPrivate::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-        switch(message) {
+    switch(message) {
         case WM_ERASEBKGND:
-                return TRUE;
-//        case WM_PAINT: {
-//                /*MSG msg;
-//                while(PeekMessage(&msg, 0, WM_TIMER, WM_TIMER, PM_REMOVE)) {
-//                        TranslateMessage(&msg);
-//                        DispatchMessage(&msg);
-//                }*/
-//                /*ValidateRect(sysDepID.hWnd, nullptr);
-//                while(PeekMessage(&msg, 0, WM_PAINT, WM_PAINT, PM_REMOVE)) {
-//                        TranslateMessage(&msg);
-//                        DispatchMessage(&msg);
-//                }
-//                InvalidateRect(sysDepID.hWnd, nullptr, FALSE);*/
-//                PAINTSTRUCT ps;
-//                BeginPaint(sysDepID.hWnd, &ps);
-//                RedrawEvent event;
-//                notifyObservers(event, Terminal::EVENT_ON_REDRAW);
-//                EndPaint(sysDepID.hWnd, &ps);
-//        }
-//                break;
+            return FALSE;
+        case WM_PAINT: {
+            RedrawEvent event;
+            notifyObservers(event, Terminal::EVENT_ON_REDRAW);
+            ValidateRect(sysDepID.hWnd, nullptr);
+        } break;
         case WM_CLOSE: {
-                CloseEvent event;
-                notifyObservers(event, Terminal::EVENT_ON_CLOSE);
-        }
-                break;
+            CloseEvent event;
+            notifyObservers(event, Terminal::EVENT_ON_CLOSE);
+        } break;
         case WM_SIZE: {
-                ResizeEvent event{LOWORD(lParam), HIWORD(lParam)};
-                notifyObservers(event, Terminal::EVENT_ON_RESIZE);
-        }
-                break;
+            ResizeEvent event{LOWORD(lParam), HIWORD(lParam)};
+            notifyObservers(event, Terminal::EVENT_ON_RESIZE);
+        } break;
         //case WM_SYSKEYDOWN:
         case WM_KEYDOWN: {
-                KeyEvent::State state = KeyEvent::DOWN;
-                if (lParam & 0x40000000) state = KeyEvent::PRESSED;
-                KeyEvent event(state, wParam);
-                notifyObservers(event, Terminal::EVENT_ON_KEY_INPUT);
-        }
-                break;
+            KeyEvent::State state = KeyEvent::DOWN;
+            if (lParam & 0x40000000) state = KeyEvent::PRESSED;
+            KeyEvent event(state, wParam);
+            notifyObservers(event, Terminal::EVENT_ON_KEY_INPUT);
+        } break;
         //case WM_SYSKEYUP:
         case WM_KEYUP: {
-                KeyEvent event(KeyEvent::UP, wParam);
-                notifyObservers(event, Terminal::EVENT_ON_KEY_INPUT);
-        }
-                break;
+            KeyEvent event(KeyEvent::UP, wParam);
+            notifyObservers(event, Terminal::EVENT_ON_KEY_INPUT);
+        } break;
         default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-        }
-        return 0;
+            return DefWindowProc(hWnd, message, wParam, lParam);
+    }
+    return 0;
 }
 
 inline ATOM TerminalPrivate::getWindowClsID() {

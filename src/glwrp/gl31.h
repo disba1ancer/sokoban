@@ -8,11 +8,11 @@
 #ifndef GL31_H_
 #define GL31_H_
 
-#include <glwrp/GLImportedFunction.h>
+#include <platform/win32.h>
 #include <GL/gl.h>
-#include <wingdi.h>
-#include "Context.h"
-
+#include <GL/glext.h>
+#include <GL/wglext.h>
+#include <glwrp/GLImportedFunction.h>
 
 namespace gl {
 
@@ -66,11 +66,14 @@ namespace gl {
 	using ::glFlush;
 	using ::glViewport;
 	using ::glGenTextures;
+	using ::glDeleteTextures;
 	using ::glBindTexture;
 	using ::glTexParameteri;
 	using ::glTexImage2D;
 	using ::glEnable;
 	using ::glBlendFunc;
+
+	class Context;
 
 	void SwapBuffers(const void* sysID);
 	void SwapBuffers(Context& context);

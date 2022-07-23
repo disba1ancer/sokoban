@@ -87,12 +87,15 @@ redShift(16), greenShift(8), blueShift(0), alphaShift(24), redLength(8), greenLe
 {
 	if (file && file[0] != '\0') {
 		bitmapFile = std::ifstream(file, std::ios::in | std::ios::binary);
-		std::uint_least16_t sign;
+		if (bitmapFile.fail()) {
+			throw std::runtime_error("Can not open file");
+		}
+		std::uint_least16_t sign = 0;
 		bitmapFile.read(reinterpret_cast<char*>(&sign), sizeof(sign));
 		if ((sign & 0xFFFF) != 0x4D42) {
 			throw std::runtime_error("Bitmap signature error");
 		}
-		BitmapMeta bitmapMeta;
+		BitmapMeta bitmapMeta = {};
 		bitmapFile.read(reinterpret_cast<char*>(&bitmapMeta), sizeof(bitmapMeta));
 		if (bitmapMeta.info.height < 0) {
 			throw std::runtime_error("Negative height not supported");
@@ -105,7 +108,7 @@ redShift(16), greenShift(8), blueShift(0), alphaShift(24), redLength(8), greenLe
 		} else if (bitmapMeta.info.bpp == 32) {
 			format = PF_RGBA8;
 			if (bitmapMeta.info.compression == BMCOMPR_BITFIELDS) {
-				ColorMasks clMasks;
+				ColorMasks clMasks = {};
 				bitmapFile.read(reinterpret_cast<char*>(&clMasks), sizeof(clMasks));
 				maskToShift(clMasks.redMask, redShift, redLength);
 				maskToShift(clMasks.greenMask, greenShift, greenLength);

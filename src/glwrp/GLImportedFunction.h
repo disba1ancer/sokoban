@@ -8,10 +8,8 @@
 #ifndef GLIMPORTEDFUNCTION_H_
 #define GLIMPORTEDFUNCTION_H_
 
+#include <platform/win32.h>
 #include <exception>
-#include <GL/gl.h>
-#include <GL/glext.h>
-#include <GL/wglext.h>
 #include <iostream>
 #include <type_traits>
 

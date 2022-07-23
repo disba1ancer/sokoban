@@ -104,11 +104,11 @@ void LevelLogic::reset(const unsigned char* levelData, int width, int height) {
 		for (unsigned x = 0; x < this->width; ++x, ++index, ++iter) {
 			switch (this->levelData[index]) {
 			case TILE_PLAYER:
-				player = util::ivec2{x, y};
+				player = util::ivec2{int(x), int(y)};
 				*iter = TILE_NONE;
 				break;
 			case TILE_CRATE:
-				crates.push_back(util::ivec2{x, y});
+				crates.push_back(util::ivec2{int(x), int(y)});
 				*iter = TILE_NONE;
 				break;
 			default:

@@ -6,6 +6,7 @@
  */
 
 #include <glwrp/gl31.h>
+#include "Context.h"
 
 namespace {
 

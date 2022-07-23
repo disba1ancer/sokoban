@@ -5,7 +5,7 @@
  *      Author: Anton
  */
 
-#include <windows.h>
+#include <platform/win32.h>
 #include <cmath>
 #include <sokoban/Game.h>
 

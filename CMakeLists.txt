@@ -61,6 +61,8 @@ add_executable(sokoban
     src/util/vec.h
 )
 target_include_directories(sokoban PRIVATE src/gl src)
+target_compile_definitions(sokoban PRIVATE _WIN32_WINNT=0x602)
+target_compile_options(sokoban PRIVATE -Wall -Wextra -Wpedantic -pedantic-errors)
 target_link_libraries(sokoban PRIVATE Threads::Threads OpenGL::GL)
 
 install(TARGETS sokoban DESTINATION .)

@@ -32,9 +32,9 @@ LevelLogic::LevelLogic(const unsigned char* leveldata, int width, int height)
 :
 		levelData(leveldata),
 		width(width),
-		widthA(util::alignSize(4, width)),
+		widthA(static_cast<int>(util::alignSize(4, static_cast<std::size_t>(width)))),
 		height(height),
-		level(widthA * height)
+		level(std::size_t(widthA) * std::size_t(height))
 {
 	reset();
 }
@@ -48,14 +48,14 @@ void LevelLogic::movePlayer(Direction direction) {
 	auto newPlayerPos = player + directions[direction];
 	if (newPlayerPos[X] >= 0 && newPlayerPos[X] < width &&
 			newPlayerPos[Y] >= 0 && newPlayerPos[Y] < height &&
-			level[newPlayerPos[X] + newPlayerPos[Y] * widthA] != TILE_WALL)
+			level[std::size_t(newPlayerPos[X]) + std::size_t(newPlayerPos[Y]) * std::size_t(widthA)] != TILE_WALL)
 	{
 		for (auto& i : crates) {
 			if (newPlayerPos == i) {
 				auto newCratePos = newPlayerPos + directions[direction];
 				if (newCratePos[X] >= 0 && newCratePos[X] < width &&
 						newCratePos[Y] >= 0 && newCratePos[Y] < height &&
-						level[newCratePos[X] + newCratePos[Y] * widthA] != TILE_WALL)
+						level[std::size_t(newCratePos[X]) + std::size_t(newCratePos[Y]) * std::size_t(widthA)] != TILE_WALL)
 				{
 					for (auto& i : crates) {
 						if (newCratePos == i) {
@@ -73,18 +73,18 @@ void LevelLogic::movePlayer(Direction direction) {
 	}
 }
 
-unsigned LevelLogic::getCratesCount() const {
-	return crates.size();
+int LevelLogic::getCratesCount() const {
+	return static_cast<int>(crates.size());
 }
 
-util::ivec2 LevelLogic::getCrate(unsigned index) const {
-	return crates[index];
+util::ivec2 LevelLogic::getCrate(int index) const {
+	return crates[std::size_t(index)];
 }
 
 bool LevelLogic::checkWinCondition() {
 	using namespace util;
 	for (auto& crate : crates) {
-		if (level[crate[X] + crate[Y] * widthA] != TILE_TARGET) return false;
+		if (level[std::size_t(crate[X]) + std::size_t(crate[Y]) * std::size_t(widthA)] != TILE_TARGET) return false;
 	}
 	return true;
 }
@@ -93,15 +93,15 @@ void LevelLogic::reset(const unsigned char* levelData, int width, int height) {
 	if (levelData) {
 		this->levelData = levelData;
 		this->width = width;
-		this->widthA = util::alignSize(4, width);
+		this->widthA = static_cast<int>(util::alignSize(4, static_cast<std::size_t>(width)));
 		this->height = height;
-		level.resize(width * height);
+		level.resize(std::size_t(width) * std::size_t(height));
 	}
 	auto index = 0U;
 	auto iter = level.begin();
 	crates.clear();
-	for (unsigned y = 0; y < this->height; ++y, iter += (this->widthA - this->width)) {
-		for (unsigned x = 0; x < this->width; ++x, ++index, ++iter) {
+	for (int y = 0; y < this->height; ++y, iter += (this->widthA - this->width)) {
+		for (int x = 0; x < this->width; ++x, ++index, ++iter) {
 			switch (this->levelData[index]) {
 			case TILE_PLAYER:
 				player = util::ivec2{int(x), int(y)};

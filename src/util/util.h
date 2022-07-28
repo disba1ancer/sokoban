@@ -108,8 +108,8 @@ namespace util {
 		return *ptr_cast<Private*>(pub->storage);
 	}*/
 
-	inline size_t alignSize(size_t align, size_t size) {
-		return (size + (align - 1)) & -align;
+	inline constexpr size_t alignSize(size_t align, size_t size) {
+		return (size + (align - 1)) & ~(align - 1);
 	}
 
 	template <typename M>

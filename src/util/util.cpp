@@ -28,7 +28,7 @@ int doSystemHandlers(sokoban::Game* game) {
 		}
 	}
 
-	return msg.wParam;
+	return static_cast<int>(msg.wParam);
 }
 
 void softTerminate(int returnValue) {
@@ -115,7 +115,7 @@ int standartUILoop() {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	return msg.wParam;
+	return static_cast<int>(msg.wParam);
 }
 
 /*matrixmath::matrix4f rotateZMatrix(float z) {

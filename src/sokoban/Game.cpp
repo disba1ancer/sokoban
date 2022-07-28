@@ -5,14 +5,14 @@
  *      Author: disba1ancer
  */
 
-#include <sokoban/Game.h>
-#include <util/util.h>
+#include <cmath>
 #include <iostream>
+#include <util/util.h>
 #include <util/vec.h>
 #include <util/mat.h>
 #include <glwrp/ShaderProgramMaker.h>
 #include "shaderProgram.h"
-#include <cmath>
+#include "Game.h"
 
 namespace {
 const unsigned char levelData[] = {
@@ -40,11 +40,12 @@ Game::Game(char* argv[]) :
 	level(levelData, 20, 15),
 	inGame(false),
 	context(window.getSysDepId()),
-	textureArray(16, 16, util::ITextureDataProvider::PF_RGBA8, 1),
-	textureCrate("assets/textures/crate.bmp"),
-	textureTarget("assets/textures/target.bmp"),
-	textureWall("assets/textures/wall.bmp"),
-	texturePlayer("assets/textures/player.bmp")
+	atlas("assets/textures/atlas.bmp"),
+	textureArray(&atlas, 16, 16)
+//	textureCrate("assets/textures/crate.bmp"),
+//	textureTarget("assets/textures/target.bmp"),
+//	textureWall("assets/textures/wall.bmp"),
+//	texturePlayer("assets/textures/player.bmp")
 {
 	while (*argv) {
 		args.push_back(*argv);
@@ -135,7 +136,7 @@ void Game::makeBuffers() {
 	auto count = (level.getCratesCount() + 1);
 
 	indices.clear();
-	for (unsigned i = 0; i < count * 4; i += 4) {
+	for (int i = 0; i < count * 4; i += 4) {
 		indices.push_back(i);
 		indices.push_back(i + 1);
 		indices.push_back(i + 2);
@@ -146,7 +147,7 @@ void Game::makeBuffers() {
 
 	using util::vec2;
 
-	auto levelSize = vec2{level.getWidth() / 2.f, level.getHeight() / 2.f};
+	auto levelSize = vec2{float(level.getWidth()) / 2.f, float(level.getHeight()) / 2.f};
 
 	vertices.clear();
 
@@ -156,7 +157,7 @@ void Game::makeBuffers() {
 	vertices.push_back((vec2(playerPos) + vec2{1, 1}) / vec2(levelSize) - 1.f);
 	vertices.push_back((vec2(playerPos) + vec2{1, 0}) / vec2(levelSize) - 1.f);
 
-	for (unsigned i = 0; i < level.getCratesCount(); ++i) {
+	for (int i = 0; i < level.getCratesCount(); ++i) {
 		auto crate = level.getCrate(i);
 		vertices.push_back(vec2(crate) / vec2(levelSize) - 1.f);
 		vertices.push_back((vec2(crate) + vec2{0, 1}) / vec2(levelSize) - 1.f);
@@ -239,10 +240,10 @@ void Game::initRender()
 	/*gl::glEnable(GL_BLEND);
 	gl::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
 
-	textureArray.addTexture(&textureWall);
-	textureArray.addTexture(&textureTarget);
-	textureArray.addTexture(&textureCrate);
-	textureArray.addTexture(&texturePlayer);
+//	textureArray.addTexture(&textureWall);
+//	textureArray.addTexture(&textureTarget);
+//	textureArray.addTexture(&textureCrate);
+//	textureArray.addTexture(&texturePlayer);
 
 	gl::glActiveTexture(GL_TEXTURE0);
 	gl::glGenTextures(1, &levelTexture);
@@ -257,7 +258,7 @@ void Game::initRender()
 	gl::glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	gl::glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	{
-		std::vector<char> textureData(textureArray.getWidth() * textureArray.getHeight() * textureArray.getDepth() * 4);
+		std::vector<char> textureData(std::size_t(textureArray.getWidth()) * std::size_t(textureArray.getHeight()) * std::size_t(textureArray.getDepth()) * 4);
 		textureArray.uploadData(textureData.data(), 0);
 		gl::glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, textureArray.getWidth(), textureArray.getHeight(), textureArray.getDepth(), 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData.data());
 	}
@@ -271,7 +272,7 @@ void Game::initRender()
 	levelMode = gl::glGetUniformLocation(program, "levelMode");
 
 	gl::glBindVertexArray(levelVAO);
-	vertexLoc = gl::glGetAttribLocation(program, "vertex");
+	vertexLoc = GLuint(gl::glGetAttribLocation(program, "vertex"));
 	gl::glEnableVertexAttribArray(vertexLoc);
 	gl::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	gl::glBindBuffer(GL_ARRAY_BUFFER, quadBuffer);

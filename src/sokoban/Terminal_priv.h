@@ -92,12 +92,12 @@ inline LRESULT TerminalPrivate::wndProc(HWND hWnd, UINT message, WPARAM wParam, 
         case WM_KEYDOWN: {
             KeyEvent::State state = KeyEvent::DOWN;
             if (lParam & 0x40000000) state = KeyEvent::PRESSED;
-            KeyEvent event(state, wParam);
+            KeyEvent event(state, static_cast<unsigned long>(wParam));
             notifyObservers(event, Terminal::EVENT_ON_KEY_INPUT);
         } break;
         //case WM_SYSKEYUP:
         case WM_KEYUP: {
-            KeyEvent event(KeyEvent::UP, wParam);
+            KeyEvent event(KeyEvent::UP, static_cast<unsigned long>(wParam));
             notifyObservers(event, Terminal::EVENT_ON_KEY_INPUT);
         } break;
         default:

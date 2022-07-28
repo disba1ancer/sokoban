@@ -8,25 +8,26 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-#include <sokoban/Terminal.h>
-#include <sokoban/CloseEvent.h>
-#include <sokoban/RedrawEvent.h>
-#include <sokoban/ResizeEvent.h>
-#include <sokoban/LevelLogic.h>
-#include <util/observer1.h>
-#include "../util/handlers2.h"
-#include "KeyEvent.h"
-#include <glwrp/gl31.h>
-#include <glwrp/Context.h>
-#include <util/BitmapTextureDataProvider.h>
-#include <util/ArrayTextureDataProvider.h>
-
 #include <vector>
 #include <thread>
 #include <atomic>
 #include <queue>
 #include <functional>
 #include <chrono>
+
+#include "Terminal.h"
+#include "CloseEvent.h"
+#include "RedrawEvent.h"
+#include "ResizeEvent.h"
+#include "LevelLogic.h"
+#include <util/observer1.h>
+#include <util/handlers2.h>
+#include "KeyEvent.h"
+#include <glwrp/gl31.h>
+#include <glwrp/Context.h>
+#include <util/BitmapTextureDataProvider.h>
+#include <util/ArrayTextureDataProvider.h>
+#include <util/TiledTextureDataProvider.h>
 
 namespace sokoban {
 
@@ -36,7 +37,7 @@ class Game {
 	LevelLogic level;
 //	std::queue<std::function<void()>> renderCommandQueue;
 	std::vector<util::vec2> vertices;
-	std::vector<unsigned> indices;
+	std::vector<int> indices;
 	bool inGame;
 	gl::Context context;
 	GLuint program;
@@ -44,17 +45,18 @@ class Game {
 	GLuint entitiesElemBuf, entitiesVertBuf;
 	GLuint levelVAO;
 	GLuint entitiesVAO;
-	util::ArrayTextureDataProvider textureArray;
-	util::BitmapTextureDataProvider textureCrate;
-	util::BitmapTextureDataProvider textureTarget;
-	util::BitmapTextureDataProvider textureWall;
-	util::BitmapTextureDataProvider texturePlayer;
+	util::BitmapTextureDataProvider atlas;
+	util::TiledTextureDataProvider textureArray;
+//	util::BitmapTextureDataProvider textureCrate;
+//	util::BitmapTextureDataProvider textureTarget;
+//	util::BitmapTextureDataProvider textureWall;
+//	util::BitmapTextureDataProvider texturePlayer;
 	GLuint levelTexture;
 	GLuint arrayTexture;
 	GLint levelSampler;
 	GLint textureArraySampler;
 	GLint levelMode;
-	GLint vertexLoc;
+	GLuint vertexLoc;
 	std::chrono::steady_clock clock;
 	std::chrono::steady_clock::time_point frameStart;
 public:

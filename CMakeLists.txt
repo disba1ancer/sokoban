@@ -13,6 +13,8 @@ set(CMAKE_CXX_STANDARD_EXTENSIONS OFF)
 find_package(Threads REQUIRED)
 find_package(OpenGL REQUIRED)
 
+set(SOKOBAN_WARNING_FLAGS)
+
 add_executable(sokoban
     src/glwrp/Context.cpp
     src/glwrp/Context.h
@@ -55,6 +57,8 @@ add_executable(sokoban
     src/util/Observer.cpp
     src/util/Observer.h
     src/util/observer1.h
+    src/util/TiledTextureDataProvider.h
+    src/util/TiledTextureDataProvider.cpp
     src/util/util.cpp
     src/util/util.h
     src/util/vec.cpp
@@ -62,7 +66,7 @@ add_executable(sokoban
 )
 target_include_directories(sokoban PRIVATE src/gl src)
 target_compile_definitions(sokoban PRIVATE _WIN32_WINNT=0x602)
-target_compile_options(sokoban PRIVATE -Wall -Wextra -Wpedantic -pedantic-errors)
+target_compile_options(sokoban PRIVATE ${SOKOBAN_WARNING_FLAGS})
 target_link_libraries(sokoban PRIVATE Threads::Threads OpenGL::GL)
 
 install(TARGETS sokoban DESTINATION .)

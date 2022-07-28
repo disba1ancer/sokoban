@@ -31,7 +31,7 @@ int ArrayTextureDataProvider::getHeight() {
 }
 
 int ArrayTextureDataProvider::getDepth() {
-	return textures.size();
+	return int(textures.size());
 }
 
 ArrayTextureDataProvider::PixelFormat ArrayTextureDataProvider::getFormat() {

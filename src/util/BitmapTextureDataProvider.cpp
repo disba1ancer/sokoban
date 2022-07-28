@@ -5,11 +5,12 @@
  *      Author: disba1ancer
  */
 
-#include <util/BitmapTextureDataProvider.h>
 #include <string>
 #include <cinttypes>
 #include <exception>
 #include <cmath>
+#include "util.h"
+#include "BitmapTextureDataProvider.h"
 
 namespace {
 	struct BitmapHeader {
@@ -148,19 +149,19 @@ void BitmapTextureDataProvider::uploadData(void* recvBuffer, unsigned) {
 	bitmapFile.seekg(pixelsPos);
 	switch (format) {
 	case PF_BGR8: {
-		size_t dataSize = 3 * width + (width % 4 ? 4 - (width % 4) : 0);
-		dataSize *= height;
+		size_t dataSize = util::alignSize(3 * std::size_t(width), 4);
+		dataSize *= std::size_t(height);
 		bitmapFile.read(static_cast<char*>(recvBuffer), dataSize);
 	} break;
 	case PF_RGBA8: {
 		auto buffer = static_cast<unsigned char*>(recvBuffer);
 		uint_least32_t pixel;
-		for (auto i = 0U; i < static_cast<unsigned>(std::abs(width * height)); ++i, buffer += 4) {
+		for (auto i = 0U; i < std::size_t(width) * std::size_t(height); ++i, buffer += 4) {
 			bitmapFile.read(reinterpret_cast<char*>(&pixel), sizeof(pixel));
-			buffer[3] = applyShiftLength(pixel, alphaShift, alphaLength, 0);
-			buffer[2] = applyShiftLength(pixel, blueShift, blueLength, 0);
-			buffer[1] = applyShiftLength(pixel, greenShift, greenLength, 0);
-			buffer[0] = applyShiftLength(pixel, redShift, redLength, 0);
+			buffer[3] = (unsigned char)applyShiftLength(pixel, alphaShift, alphaLength, 0);
+			buffer[2] = (unsigned char)applyShiftLength(pixel, blueShift, blueLength, 0);
+			buffer[1] = (unsigned char)applyShiftLength(pixel, greenShift, greenLength, 0);
+			buffer[0] = (unsigned char)applyShiftLength(pixel, redShift, redLength, 0);
 		}
 	} break;
 	default:
